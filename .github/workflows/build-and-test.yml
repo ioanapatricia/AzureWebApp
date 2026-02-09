@@ -1,0 +1,90 @@
+name: Build, Tesst and Deploy
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: azurewebapp-demo
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        run: dotnet restore AzureWebApp/AzureWebApp.sln
+
+      - name: Build
+        run: dotnet build AzureWebApp/AzureWebApp.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test AzureWebApp/AzureWebApp.sln --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: dotnet publish AzureWebApp/AzureWebApp.csproj --configuration Release --output ./publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4  
+        with:
+          name: webapp
+          path: ./publish
+
+  terraform:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ./terraform/dynamic
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./terraform/dynamic
+        run: terraform apply -auto-approve
+
+  deploy:
+      runs-on: ubuntu-latest
+      needs: terraform
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+      steps:
+        - name: Azure Login
+          uses: azure/login@v2
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+        - name: Download artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: webapp
+            path: ./publish
+
+        - name: Deploy to Azure Web App
+          uses: azure/webapps-deploy@v3
+          with:
+            app-name: ${{ env.AZURE_WEBAPP_NAME }}
+            package: ./publish

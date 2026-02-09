@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureWebApp", "AzureWebApp.csproj", "{D810D859-1311-4F5E-9265-70475B37E394}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureWebAppTests", "..\AzureWebAppTests\AzureWebAppTests.csproj", "{A15ECDD8-3301-4F4C-8DE9-12A5CA682C75}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "static", "static", "{2C866538-E52A-42F4-A2B0-A9D25ACDD538}"
+	ProjectSection(SolutionItems) = preProject
+		main.tf = main.tf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dynamic", "dynamic", "{33795BCB-A7A0-44D3-9D9F-EAC3095540CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D810D859-1311-4F5E-9265-70475B37E394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D810D859-1311-4F5E-9265-70475B37E394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D810D859-1311-4F5E-9265-70475B37E394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D810D859-1311-4F5E-9265-70475B37E394}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A15ECDD8-3301-4F4C-8DE9-12A5CA682C75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A15ECDD8-3301-4F4C-8DE9-12A5CA682C75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A15ECDD8-3301-4F4C-8DE9-12A5CA682C75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A15ECDD8-3301-4F4C-8DE9-12A5CA682C75}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2C866538-E52A-42F4-A2B0-A9D25ACDD538} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{33795BCB-A7A0-44D3-9D9F-EAC3095540CE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B79DDCA0-9213-4356-BED2-B5DD0ABA95C6}
+	EndGlobalSection
+EndGlobal
