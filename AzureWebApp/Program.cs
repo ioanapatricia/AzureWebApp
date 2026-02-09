@@ -1,47 +1,26 @@
-using System.IO;
 using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAntiforgery();
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseHttpsRedirection();
-app.UseAuthorization();
+
+var connectionString = app.Configuration["AzureStorage:ConnectionString"];
+var containerName = app.Configuration["AzureStorage:ContainerName"] ?? "photos";
 
 app.MapPost("/upload", async (IFormFile file) =>
 {
-    if (file?.Length > 0)
-    {
-        var connectionString = builder.Configuration.GetConnectionString("AzureStorage");
-        var containerName = "photos";
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-        await containerClient.CreateIfNotExistsAsync();
-        var blobClient = containerClient.GetBlobClient(file.FileName);
+    var blobClient = new BlobContainerClient(connectionString, containerName);
+    await blobClient.CreateIfNotExistsAsync();
+    
+    var blob = blobClient.GetBlobClient(file.FileName);
+    await blob.UploadAsync(file.OpenReadStream(), overwrite: true);
 
-        using var stream = file.OpenReadStream();
-        await blobClient.UploadAsync(stream, overwrite: true);
-
-        return Results.Ok(new
-        {
-            message = "File uploaded",
-            fileName = file.FileName,
-            uri = blobClient.Uri
-        });
-    }
-    return Results.BadRequest("No file provided");
+    return Results.Ok(new { file.FileName, blob.Uri });
 }).DisableAntiforgery();
-
-app.MapControllers();
 
 app.Run();
