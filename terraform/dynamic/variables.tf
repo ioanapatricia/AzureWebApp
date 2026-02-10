@@ -10,8 +10,8 @@ variable "app_name" {
   default     = "azurewebapp-demo"
 }
 
-variable "azure_storage_connection_string" {
-  description = "Connection string for Azure Storage Account"
+variable "storage_account_name" {
+  description = "Name of the Storage Account (must be globally unique, lowercase, 3-24 characters)"
   type        = string
-  sensitive   = true
+  default     = "sadevazurewebapp"
 }

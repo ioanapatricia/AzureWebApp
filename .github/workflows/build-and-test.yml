@@ -64,7 +64,7 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./terraform/dynamic
-        run: terraform apply -auto-approve -var="azure_storage_connection_string=${{ secrets.AZURESTORAGE__CONNECTIONSTRING }}"
+        run: terraform apply -auto-approve
 
   deploy:
       runs-on: ubuntu-latest
