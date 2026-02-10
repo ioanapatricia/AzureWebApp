@@ -9,3 +9,9 @@ variable "app_name" {
   type        = string
   default     = "azurewebapp-demo"
 }
+
+variable "azure_storage_connection_string" {
+  description = "Connection string for Azure Storage Account"
+  type        = string
+  sensitive   = true
+}

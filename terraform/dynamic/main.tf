@@ -37,6 +37,10 @@ resource "azurerm_linux_web_app" "main" {
   location            = data.azurerm_resource_group.main.location
   service_plan_id     = azurerm_service_plan.main.id
 
+  app_settings = {
+    AZURESTORAGE__CONNECTIONSTRING = var.azure_storage_connection_string
+  }
+
   site_config {
     application_stack {
       dotnet_version = "8.0"
