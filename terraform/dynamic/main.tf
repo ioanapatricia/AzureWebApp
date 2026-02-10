@@ -53,6 +53,7 @@ resource "azurerm_linux_web_app" "main" {
 
   app_settings = {
     AZURESTORAGE__CONNECTIONSTRING = azurerm_storage_account.main.primary_blob_connection_string
+    AZURESTORAGE__CONTAINERNAME    = "photos"
   }
 
   site_config {
