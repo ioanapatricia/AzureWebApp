@@ -119,6 +119,6 @@ jobs:
 
         - name: Deploy to Azure Function App
           run: |
-            cd publish/functionapp
-            func azure functionapp publish ${{ needs.terraform.outputs.function_app_name }}
-            cd ../.. 
+            cd AzureWebApp.Functions
+            func azure functionapp publish ${{ needs.terraform.outputs.function_app_name }} --build-native-deps
+            cd .. 
