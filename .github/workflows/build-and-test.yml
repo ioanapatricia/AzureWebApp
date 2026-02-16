@@ -122,3 +122,6 @@ jobs:
           with:
             app-name: ${{ needs.terraform.outputs.function_app_name }}
             package: ./publish/functionapp
+          env:
+            SCM_DO_BUILD_DURING_DEPLOYMENT: false
+            ENABLE_ORYX_BUILD: false
