@@ -46,9 +46,9 @@ jobs:
 
       - name: Generate Function Metadata
         run: |
-          cd publish/functionapp
+          cd AzureWebApp.Functions
           func extensions install --dotnet-isolated
-          cd ../..
+          cd ..
 
       - name: Upload Web App artifact
         uses: actions/upload-artifact@v4  
