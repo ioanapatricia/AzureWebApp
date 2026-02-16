@@ -86,6 +86,12 @@ resource "azurerm_linux_function_app" "main" {
   storage_account_access_key = azurerm_storage_account.main.primary_access_key
 
   app_settings = {
+    # Required Azure Functions settings
+    "AzureWebJobsStorage"                = azurerm_storage_account.main.primary_connection_string
+    "FUNCTIONS_WORKER_RUNTIME"           = "dotnet-isolated"
+    "FUNCTIONS_EXTENSION_VERSION"        = "~4"
+    
+    # Application configuration
     "AZURESTORAGE__CONNECTIONSTRING"    = azurerm_storage_account.main.primary_blob_connection_string
     "AZURESTORAGE__RESIZEDCONTAINER"    = azurerm_storage_container.photos_resized.name
     "IMAGERESIZE__WIDTH"                = var.image_resize_width
@@ -95,7 +101,8 @@ resource "azurerm_linux_function_app" "main" {
 
   site_config {
     application_stack {
-      dotnet_version = "8.0"
+      dotnet_version              = "8.0"
+      use_dotnet_isolated_runtime = true
     }
   }
 }
