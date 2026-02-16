@@ -47,7 +47,7 @@ jobs:
       - name: Generate Function Metadata
         run: |
           cd publish/functionapp
-          func extensions install
+          func extensions install --dotnet-isolated
           cd ../..
 
       - name: Upload Web App artifact
@@ -130,5 +130,5 @@ jobs:
           run: |
             npm install -g azure-functions-core-tools@4
             cd publish/functionapp
-            func azure functionapp publish ${{ needs.terraform.outputs.function_app_name }} --build remote
+            func azure functionapp publish ${{ needs.terraform.outputs.function_app_name }}
             cd ../.. 
