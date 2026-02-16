@@ -94,7 +94,6 @@ resource "azurerm_linux_function_app" "main" {
     # Deployment settings - disable build during deployment
     "SCM_DO_BUILD_DURING_DEPLOYMENT"    = "false"
     "ENABLE_ORYX_BUILD"                 = "false"
-    "WEBSITE_RUN_FROM_PACKAGE"          = "1"
     
     # Application configuration
     "AZURESTORAGE__CONNECTIONSTRING"    = azurerm_storage_account.main.primary_blob_connection_string
