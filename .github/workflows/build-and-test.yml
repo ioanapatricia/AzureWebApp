@@ -32,14 +32,23 @@ jobs:
       - name: Run tests
         run: dotnet test AzureWebApp/AzureWebApp.sln --configuration Release --no-build --verbosity normal
 
-      - name: Publish
-        run: dotnet publish AzureWebApp/AzureWebApp.csproj --configuration Release --output ./publish
+      - name: Publish Web App
+        run: dotnet publish AzureWebApp/AzureWebApp.csproj --configuration Release --output ./publish/webapp
 
-      - name: Upload artifact
+      - name: Publish Function App
+        run: dotnet publish AzureWebApp.Functions/AzureWebApp.Functions.csproj --configuration Release --output ./publish/functionapp
+
+      - name: Upload Web App artifact
         uses: actions/upload-artifact@v4  
         with:
           name: webapp
-          path: ./publish
+          path: ./publish/webapp
+
+      - name: Upload Function App artifact
+        uses: actions/upload-artifact@v4  
+        with:
+          name: functionapp
+          path: ./publish/functionapp
 
   terraform:
     runs-on: ubuntu-latest
@@ -47,6 +56,7 @@ jobs:
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     outputs:
       app_service_name: ${{ steps.terraform-output.outputs.app_service_name }}
+      function_app_name: ${{ steps.terraform-output.outputs.function_app_name }}
 
     steps:
       - name: Checkout code
@@ -71,7 +81,9 @@ jobs:
       - name: Get Terraform Outputs
         id: terraform-output
         working-directory: ./terraform/dynamic
-        run: echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+        run: |
+          echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
+          echo "function_app_name=$(terraform output -raw function_app_name)" >> $GITHUB_OUTPUT
 
   deploy:
       runs-on: ubuntu-latest
@@ -84,14 +96,26 @@ jobs:
           with:
             creds: ${{ secrets.AZURE_CREDENTIALS }}
         
-        - name: Download artifact
+        - name: Download Web App artifact
           uses: actions/download-artifact@v4
           with:
             name: webapp
-            path: ./publish
+            path: ./publish/webapp
+
+        - name: Download Function App artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: functionapp
+            path: ./publish/functionapp
 
         - name: Deploy to Azure Web App
           uses: azure/webapps-deploy@v3
           with:
             app-name: ${{ needs.terraform.outputs.app_service_name }}
-            package: ./publish
+            package: ./publish/webapp
+
+        - name: Deploy to Azure Function App
+          uses: azure/functions-action@v1
+          with:
+            app-name: ${{ needs.terraform.outputs.function_app_name }}
+            package: ./publish/functionapp
