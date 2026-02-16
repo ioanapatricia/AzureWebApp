@@ -36,19 +36,7 @@ jobs:
         run: dotnet publish AzureWebApp/AzureWebApp.csproj --configuration Release --output ./publish/webapp
 
       - name: Publish Function App
-        run: |
-          cd AzureWebApp.Functions
-          dotnet publish --configuration Release --output ../publish/functionapp
-          cd ..
-
-      - name: Install Azure Functions Core Tools
-        run: npm install -g azure-functions-core-tools@4
-
-      - name: Generate Function Metadata
-        run: |
-          cd AzureWebApp.Functions
-          func extensions install --dotnet-isolated
-          cd ..
+        run: dotnet publish AzureWebApp.Functions/AzureWebApp.Functions.csproj --configuration Release --output ./publish/functionapp
 
       - name: Upload Web App artifact
         uses: actions/upload-artifact@v4  
@@ -126,9 +114,11 @@ jobs:
             app-name: ${{ needs.terraform.outputs.app_service_name }}
             package: ./publish/webapp
 
+        - name: Install Azure Functions Core Tools
+          run: npm install -g azure-functions-core-tools@4
+
         - name: Deploy to Azure Function App
           run: |
-            npm install -g azure-functions-core-tools@4
             cd publish/functionapp
             func azure functionapp publish ${{ needs.terraform.outputs.function_app_name }}
             cd ../.. 
