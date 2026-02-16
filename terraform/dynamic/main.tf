@@ -91,6 +91,11 @@ resource "azurerm_linux_function_app" "main" {
     "FUNCTIONS_WORKER_RUNTIME"           = "dotnet-isolated"
     "FUNCTIONS_EXTENSION_VERSION"        = "~4"
     
+    # Deployment settings - disable build during deployment
+    "SCM_DO_BUILD_DURING_DEPLOYMENT"    = "false"
+    "ENABLE_ORYX_BUILD"                 = "false"
+    "WEBSITE_RUN_FROM_PACKAGE"          = "1"
+    
     # Application configuration
     "AZURESTORAGE__CONNECTIONSTRING"    = azurerm_storage_account.main.primary_blob_connection_string
     "AZURESTORAGE__RESIZEDCONTAINER"    = azurerm_storage_container.photos_resized.name
