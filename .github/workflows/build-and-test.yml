@@ -38,6 +38,9 @@ jobs:
       - name: Publish Function App
         run: dotnet publish AzureWebApp.Functions/AzureWebApp.Functions.csproj --configuration Release --output ./publish/functionapp
 
+      - name: Copy host.json to Function App output
+        run: cp AzureWebApp.Functions/host.json ./publish/functionapp/host.json
+
       - name: Upload Web App artifact
         uses: actions/upload-artifact@v4  
         with:
