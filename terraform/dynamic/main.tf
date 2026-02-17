@@ -91,16 +91,12 @@ resource "azurerm_linux_function_app" "main" {
     "FUNCTIONS_WORKER_RUNTIME"           = "dotnet-isolated"
     "FUNCTIONS_EXTENSION_VERSION"        = "~4"
     
-    # Deployment settings - disable build during deployment
-    "SCM_DO_BUILD_DURING_DEPLOYMENT"    = "false"
-    "ENABLE_ORYX_BUILD"                 = "false"
-    
     # Application configuration
-    "AZURESTORAGE__CONNECTIONSTRING"    = azurerm_storage_account.main.primary_blob_connection_string
-    "AZURESTORAGE__RESIZEDCONTAINER"    = azurerm_storage_container.photos_resized.name
-    "IMAGERESIZE__WIDTH"                = var.image_resize_width
-    "IMAGERESIZE__HEIGHT"               = var.image_resize_height
-    "IMAGERESIZE__QUALITY"              = var.image_resize_quality
+    "AzureStorage__ConnectionString"    = azurerm_storage_account.main.primary_blob_connection_string
+    "AzureStorage__ResizedContainer"    = azurerm_storage_container.photos_resized.name
+    "ImageResize__Width"                = var.image_resize_width
+    "ImageResize__Height"               = var.image_resize_height
+    "ImageResize__Quality"              = var.image_resize_quality
   }
 
   site_config {
