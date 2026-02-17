@@ -91,9 +91,12 @@ resource "azurerm_linux_function_app" "main" {
     "FUNCTIONS_WORKER_RUNTIME"           = "dotnet-isolated"
     "FUNCTIONS_EXTENSION_VERSION"        = "~4"
     
+    # Deployment settings
+    "WEBSITE_ENABLE_SYNC_UPDATE_SITE"   = "true"
+    
     # Application configuration
-    "AzureStorageConnection"            = azurerm_storage_account.main.primary_blob_connection_string
-    "AzureStorage__ConnectionString"    = azurerm_storage_account.main.primary_blob_connection_string
+    "AzureStorageConnection"            = azurerm_storage_account.main.primary_connection_string
+    "AzureStorage__ConnectionString"    = azurerm_storage_account.main.primary_connection_string
     "AzureStorage__ResizedContainer"    = azurerm_storage_container.photos_resized.name
     "ImageResize__Width"                = var.image_resize_width
     "ImageResize__Height"               = var.image_resize_height
@@ -101,6 +104,8 @@ resource "azurerm_linux_function_app" "main" {
   }
 
   site_config {
+    always_on = true
+    
     application_stack {
       dotnet_version              = "8.0"
       use_dotnet_isolated_runtime = true
