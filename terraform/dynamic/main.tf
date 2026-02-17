@@ -92,6 +92,7 @@ resource "azurerm_linux_function_app" "main" {
     "FUNCTIONS_EXTENSION_VERSION"        = "~4"
     
     # Application configuration
+    "AzureStorageConnection"            = azurerm_storage_account.main.primary_blob_connection_string
     "AzureStorage__ConnectionString"    = azurerm_storage_account.main.primary_blob_connection_string
     "AzureStorage__ResizedContainer"    = azurerm_storage_container.photos_resized.name
     "ImageResize__Width"                = var.image_resize_width

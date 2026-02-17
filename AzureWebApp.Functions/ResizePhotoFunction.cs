@@ -20,7 +20,7 @@ namespace AzureWebApp.Functions
 
         [Function("ResizePhoto")]
         public async Task Run(
-            [BlobTrigger("photos/{name}", Connection = "AzureStorage:ConnectionString")] Stream blobStream,
+            [BlobTrigger("photos/{name}", Connection = "AzureStorageConnection")] Stream blobStream,
             string name,
             FunctionContext context)
         {
