@@ -38,6 +38,12 @@ jobs:
       - name: Publish Function App
         run: dotnet publish AzureWebApp.Functions/AzureWebApp.Functions.csproj --configuration Release --output ./publish/functionapp
 
+      - name: Create Function App ZIP
+        run: |
+          cd ./publish/functionapp
+          zip -r ../functionapp.zip .
+          cd ../..
+
       - name: Upload Web App artifact
         uses: actions/upload-artifact@v4  
         with:
@@ -48,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4  
         with:
           name: functionapp
-          path: ./publish/functionapp
+          path: ./publish/functionapp.zip
 
   terraform:
     runs-on: ubuntu-latest
@@ -106,7 +112,7 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: functionapp
-            path: ./publish/functionapp
+            path: ./publish
 
         - name: Deploy to Azure Web App
           uses: azure/webapps-deploy@v3
@@ -118,4 +124,5 @@ jobs:
           uses: azure/functions-action@v1
           with:
             app-name: ${{ needs.terraform.outputs.function_app_name }}
-            package: ./publish/functionapp
+            package: ./publish/functionapp.zip
+            respect-funcignore: true
