@@ -63,6 +63,7 @@ jobs:
     outputs:
       app_service_name: ${{ steps.terraform-output.outputs.app_service_name }}
       function_app_name: ${{ steps.terraform-output.outputs.function_app_name }}
+      resource_group_name: ${{ steps.terraform-output.outputs.resource_group_name }}
 
     steps:
       - name: Checkout code
@@ -90,6 +91,7 @@ jobs:
         run: |
           echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
           echo "function_app_name=$(terraform output -raw function_app_name)" >> $GITHUB_OUTPUT
+          echo "resource_group_name=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
 
   deploy:
       runs-on: ubuntu-latest
@@ -123,12 +125,13 @@ jobs:
         - name: Deploy to Azure Function App
           run: |
             az functionapp deployment source config-zip \
-              --resource-group $(az functionapp show --name ${{ needs.terraform.outputs.function_app_name }} --query resourceGroup -o tsv) \
+              --resource-group ${{ needs.terraform.outputs.resource_group_name }} \
               --name ${{ needs.terraform.outputs.function_app_name }} \
               --src ./publish/functionapp.zip \
               --build-remote false
             
         - name: Restart Function App
           run: |
-            az functionapp restart --name ${{ needs.terraform.outputs.function_app_name }} \
-              --resource-group $(az functionapp show --name ${{ needs.terraform.outputs.function_app_name }} --query resourceGroup -o tsv)
+            az functionapp restart \
+              --name ${{ needs.terraform.outputs.function_app_name }} \
+              --resource-group ${{ needs.terraform.outputs.resource_group_name }}
