@@ -39,3 +39,27 @@ variable "image_resize_quality" {
   type        = string
   default     = "90"
 }
+
+variable "sql_server_name" {
+  description = "Name of the SQL Server (must be globally unique)"
+  type        = string
+  default     = "azurewebapp-sqlserver"
+}
+
+variable "sql_database_name" {
+  description = "Name of the SQL Database"
+  type        = string
+  default     = "azurewebapp-db"
+}
+
+variable "sql_admin_username" {
+  description = "SQL Server administrator username"
+  type        = string
+  sensitive   = true
+}
+
+variable "sql_admin_password" {
+  description = "SQL Server administrator password"
+  type        = string
+  sensitive   = true
+}
