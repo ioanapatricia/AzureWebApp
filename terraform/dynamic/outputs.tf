@@ -33,15 +33,3 @@ output "function_app_default_hostname" {
 output "resized_container_name" {
   value = azurerm_storage_container.photos_resized.name
 }
-
-output "sql_server_name" {
-  value = azurerm_mssql_server.main.name
-}
-
-output "sql_server_fqdn" {
-  value = azurerm_mssql_server.main.fully_qualified_domain_name
-}
-
-output "sql_database_name" {
-  value = azurerm_mssql_database.main.name
-}

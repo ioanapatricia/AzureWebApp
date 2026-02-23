@@ -64,8 +64,6 @@ jobs:
       app_service_name: ${{ steps.terraform-output.outputs.app_service_name }}
       function_app_name: ${{ steps.terraform-output.outputs.function_app_name }}
       resource_group_name: ${{ steps.terraform-output.outputs.resource_group_name }}
-      sql_server_fqdn: ${{ steps.terraform-output.outputs.sql_server_fqdn }}
-      sql_database_name: ${{ steps.terraform-output.outputs.sql_database_name }}
 
     steps:
       - name: Checkout code
@@ -85,9 +83,6 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./terraform/dynamic
-        env:
-          TF_VAR_sql_admin_username: ${{ secrets.SQL_ADMIN_USERNAME }}
-          TF_VAR_sql_admin_password: ${{ secrets.SQL_ADMIN_PASSWORD }}
         run: terraform apply -auto-approve
 
       - name: Get Terraform Outputs
@@ -97,8 +92,6 @@ jobs:
           echo "app_service_name=$(terraform output -raw app_service_name)" >> $GITHUB_OUTPUT
           echo "function_app_name=$(terraform output -raw function_app_name)" >> $GITHUB_OUTPUT
           echo "resource_group_name=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
-          echo "sql_server_fqdn=$(terraform output -raw sql_server_fqdn)" >> $GITHUB_OUTPUT
-          echo "sql_database_name=$(terraform output -raw sql_database_name)" >> $GITHUB_OUTPUT
 
   deploy:
       runs-on: ubuntu-latest
@@ -128,23 +121,6 @@ jobs:
           with:
             app-name: ${{ needs.terraform.outputs.app_service_name }}
             package: ./publish/webapp
-
-        - name: Setup .NET for migrations
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: '8.0.x'
-
-        - name: Checkout code for migrations
-          uses: actions/checkout@v4
-
-        - name: Install EF Core tools
-          run: dotnet tool install --global dotnet-ef
-
-        - name: Apply Database Migrations
-          env:
-            ConnectionStrings__DefaultConnection: "Server=tcp:${{ needs.terraform.outputs.sql_server_fqdn }},1433;Initial Catalog=${{ needs.terraform.outputs.sql_database_name }};User ID=${{ secrets.SQL_ADMIN_USERNAME }};Password=${{ secrets.SQL_ADMIN_PASSWORD }};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-          working-directory: ./AzureWebApp
-          run: dotnet ef database update
 
         - name: Deploy to Azure Function App
           run: |
