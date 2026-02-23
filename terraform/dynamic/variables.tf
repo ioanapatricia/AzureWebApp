@@ -53,9 +53,14 @@ variable "sql_database_name" {
 }
 
 variable "sql_admin_username" {
-  description = "SQL Server administrator username"
+  description = "SQL Server administrator username (cannot be: admin, administrator, sa, root, dbmanager, loginmanager, dbo, guest, public, or contain spaces)"
   type        = string
   sensitive   = true
+  
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9_-]{0,127}$", var.sql_admin_username)) && !contains(["admin", "administrator", "sa", "root", "dbmanager", "loginmanager", "dbo", "guest", "public"], var.sql_admin_username)
+    error_message = "SQL admin username must start with a letter, contain only lowercase letters, numbers, underscores, or hyphens, be 1-128 characters, and cannot be a reserved name (admin, administrator, sa, root, etc.)."
+  }
 }
 
 variable "sql_admin_password" {
